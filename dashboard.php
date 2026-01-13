@@ -63,9 +63,10 @@ $pageTitle = 'Dashboard';
     <div class="card mb-4">
         <div class="referral-link-card">
             <h5><i class="bi bi-link-45deg me-2"></i>Your Referral Link</h5>
+            <p class="text-muted mb-3">Share this link to invite others to join the community.</p>
             <div class="referral-link-input">
-                <input type="text" value="<?php echo htmlspecialchars($referralUrl); ?>" readonly data-testid="input-referral-link">
-                <button class="btn copy-btn" data-testid="button-copy-link">
+                <input type="text" id="referral-url" value="<?php echo htmlspecialchars($referralUrl); ?>" readonly data-testid="input-referral-link">
+                <button class="btn copy-btn" onclick="copyReferralLink()" data-testid="button-copy-link">
                     <i class="bi bi-clipboard me-1"></i> Copy
                 </button>
             </div>

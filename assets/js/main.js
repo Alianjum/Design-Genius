@@ -1,15 +1,39 @@
-$(document).ready(function() {
-    $('.copy-btn').on('click', function() {
-        var input = $(this).siblings('input');
+function copyReferralLink() {
+    var input = document.getElementById('referral-url');
+    if (input) {
         input.select();
-        document.execCommand('copy');
+        input.setSelectionRange(0, 99999);
         
-        var originalText = $(this).text();
-        $(this).text('Copied!');
-        
-        setTimeout(function() {
-            $('.copy-btn').text(originalText);
-        }, 2000);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(input.value).then(function() {
+                showCopySuccess();
+            }).catch(function() {
+                document.execCommand('copy');
+                showCopySuccess();
+            });
+        } else {
+            document.execCommand('copy');
+            showCopySuccess();
+        }
+    }
+}
+
+function showCopySuccess() {
+    var btn = $('.copy-btn');
+    var originalHtml = btn.html();
+    btn.html('<i class="bi bi-check me-1"></i> Copied!');
+    btn.addClass('btn-success').removeClass('btn-primary');
+    
+    setTimeout(function() {
+        btn.html(originalHtml);
+        btn.removeClass('btn-success').addClass('btn-primary');
+    }, 2000);
+}
+
+$(document).ready(function() {
+    $('.copy-btn').on('click', function(e) {
+        e.preventDefault();
+        copyReferralLink();
     });
 
     $('.mobile-toggle').on('click', function() {

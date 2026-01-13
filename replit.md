@@ -2,60 +2,108 @@
 
 ## Overview
 
-Help the Group is a web application designed as a support community for cancer patients and survivors. The platform enables users to join the community through referral links, build support networks through a two-level referral system, and send email invitations to potential members. It features both user and admin dashboards with referral tracking, user management, and email invitation capabilities.
+Help the Group is a web application designed as a support community for cancer patients and survivors. The platform enables users to join the community through referral links, build support networks through direct referrals, and send email invitations to potential members. It features both user and admin dashboards with referral tracking, user management, and email invitation capabilities.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Technology preference: PHP, HTML, CSS, Bootstrap, jQuery
 
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React with TypeScript using Vite as the build tool
-- **Routing**: Wouter for lightweight client-side routing
-- **State Management**: TanStack React Query for server state management and caching
-- **UI Components**: shadcn/ui component library built on Radix UI primitives
-- **Styling**: Tailwind CSS with custom design tokens for healthcare-themed styling
-- **Form Handling**: React Hook Form with Zod validation via @hookform/resolvers
-- **Design System**: Premium SaaS aesthetic with calm healthcare theme (Primary Blue #1D4ED8, Soft Teal #22D3EE, Accent Green #10B981)
-- **Typography**: Poppins for headings, Inter for body text
+- **HTML5/CSS3**: Semantic HTML with custom CSS
+- **Bootstrap 5**: Responsive grid system and UI components (via CDN)
+- **jQuery 3.7**: DOM manipulation and AJAX requests (via CDN)
+- **Bootstrap Icons**: Icon library for visual elements
+- **Design System**: Premium SaaS aesthetic with calm healthcare theme
+  - Primary Blue: #1D4ED8
+  - Soft Teal: #22D3EE
+  - Accent Green: #10B981
+- **Typography**: Poppins for headings, Inter for body text (Google Fonts)
 
 ### Backend Architecture
-- **Framework**: Express.js with TypeScript
-- **Server**: HTTP server with support for development (Vite middleware) and production (static file serving)
-- **API Design**: RESTful JSON API under `/api` prefix
-- **Authentication**: Simple session-based auth stored in localStorage (no JWT or session middleware currently implemented)
-- **Storage Layer**: Abstract storage interface (`IStorage`) with in-memory implementation (`MemStorage`), designed for easy database migration
+- **Language**: PHP 8.3
+- **Server**: PHP built-in development server
+- **Authentication**: PHP sessions with password_hash/password_verify
+- **Database Connection**: PDO with PostgreSQL driver
 
 ### Data Layer
-- **ORM**: Drizzle ORM with PostgreSQL dialect
-- **Schema Validation**: Zod schemas generated from Drizzle schema using drizzle-zod
+- **Database**: PostgreSQL
+- **Connection**: PDO with environment variables (PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD)
 - **Database Schema**:
-  - `users`: Core user table with referral tracking (id, name, email, password, referralCode, referredBy, role, isActive, joinDate)
-  - `emailLogs`: Email invitation tracking (senderId, recipientEmail, subject, message, status, sentAt)
+  - `users`: id, name, email, password, referral_code, referred_by, role, is_active, join_date
+  - `email_logs`: id, sender_id, recipient_email, subject, message, status, sent_at
 
-### Key Design Patterns
-- **Shared Schema**: Types and validation schemas shared between client and server via `@shared/*` path alias
-- **API Client**: Centralized fetch wrapper with error handling in `queryClient.ts`
-- **Component Composition**: Dashboard layout component wraps authenticated pages with sidebar navigation
-- **Role-Based Access**: Separate routes and dashboards for users (`/dashboard/*`) and admins (`/admin/*`)
+### Project Structure
+```
+/
+├── config/
+│   ├── database.php      # Database connection and helper functions
+│   └── init_db.php       # Database initialization and seeding
+├── includes/
+│   ├── header.php        # HTML head and meta tags
+│   ├── footer.php        # Scripts and closing tags
+│   └── sidebar.php       # Dashboard sidebar navigation
+├── admin/
+│   ├── dashboard.php     # Admin dashboard
+│   ├── users.php         # All users list
+│   ├── user-detail.php   # Individual user details
+│   └── emails.php        # Email logs
+├── assets/
+│   ├── css/style.css     # Custom styles
+│   └── js/main.js        # jQuery scripts
+├── index.php             # Landing page
+├── login.php             # User login
+├── signup.php            # User registration
+├── logout.php            # Session logout
+├── dashboard.php         # User dashboard
+├── referrals.php         # User's referrals list
+├── email-invitations.php # Send email invitations
+├── about.php             # About Us page
+├── how-it-works.php      # How It Works page
+├── resources.php         # Resources page
+├── contact.php           # Contact Us page
+├── faq.php               # FAQ page
+├── support.php           # Help Center page
+├── privacy.php           # Privacy Policy
+├── terms.php             # Terms of Service
+└── cookies.php           # Cookie Policy
+```
 
-## External Dependencies
+## Key Features
 
-### Database
-- **PostgreSQL**: Primary database (configured via `DATABASE_URL` environment variable)
-- **Drizzle Kit**: Database migration tooling (`db:push` command)
+### User Features
+- Create account with optional referral code
+- Personal dashboard with referral statistics
+- Unique referral link with copy functionality
+- View and track direct referrals
+- Send email invitations to potential members
 
-### Third-Party Services
-- **Email**: Nodemailer configured for sending invitation emails (SMTP configuration required)
-- **Session Storage**: connect-pg-simple for PostgreSQL session storage capability
+### Admin Features
+- Overview dashboard with community statistics
+- View all registered users
+- Click on any user to view their details and referrals
+- View all email logs sent by members
 
-### Key NPM Packages
-- **UI/UX**: Full suite of Radix UI primitives, Embla Carousel, Recharts for charts, date-fns
-- **Forms**: react-hook-form, zod, @hookform/resolvers
-- **Server**: express, express-session, express-rate-limit
-- **Build**: Vite, esbuild, tsx for TypeScript execution
+## Running the Application
 
-### Development Tools
-- **Replit Plugins**: vite-plugin-runtime-error-modal, vite-plugin-cartographer, vite-plugin-dev-banner
-- **Type Checking**: TypeScript with strict mode enabled
+To run the PHP server:
+```bash
+php -S 0.0.0.0:5000
+```
+
+To initialize/reset the database:
+```bash
+php config/init_db.php
+```
+
+## Admin Credentials
+- Email: admin@helpthegroup.com
+- Password: admin123
+
+## Sample Users
+- Sarah Johnson (sarah@example.com / password123) - Referred by Admin, has 1 referral
+- Michael Chen (michael@example.com / password123) - Referred by Sarah
+- Emily Davis (emily@example.com / password123) - Referred by Admin
+- James Wilson (james@example.com / password123) - Referred by Admin

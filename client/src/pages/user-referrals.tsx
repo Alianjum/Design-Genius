@@ -60,9 +60,6 @@ export default function UserReferrals() {
     });
   };
 
-  const level1Referrals = referrals?.filter((r) => r.level === 1) || [];
-  const level2Referrals = referrals?.filter((r) => r.level === 2) || [];
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -92,14 +89,14 @@ export default function UserReferrals() {
           </CardContent>
         </Card>
 
-        {/* Level 1 Referrals */}
+        {/* Referrals Table */}
         <Card>
           <CardHeader>
             <CardTitle className="font-heading text-lg flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-xs font-semibold text-accent">1</span>
-              Level 1 Referrals
+              <Users className="h-5 w-5" />
+              Your Referrals
             </CardTitle>
-            <CardDescription>Direct referrals - people who joined using your link</CardDescription>
+            <CardDescription>People who joined using your referral link ({referrals?.length || 0} total)</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -108,9 +105,9 @@ export default function UserReferrals() {
                   <Skeleton key={i} className="h-12 w-full" />
                 ))}
               </div>
-            ) : level1Referrals.length > 0 ? (
+            ) : referrals && referrals.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full" data-testid="table-level1-referrals">
+                <table className="w-full" data-testid="table-referrals">
                   <thead>
                     <tr className="border-b text-left text-sm text-muted-foreground">
                       <th className="pb-3 font-medium">Name</th>
@@ -119,7 +116,7 @@ export default function UserReferrals() {
                     </tr>
                   </thead>
                   <tbody>
-                    {level1Referrals.map((referral) => (
+                    {referrals.map((referral) => (
                       <tr key={referral.id} className="border-b last:border-0" data-testid={`row-referral-${referral.id}`}>
                         <td className="py-3 font-medium">{referral.name}</td>
                         <td className="py-3 text-muted-foreground">{referral.email}</td>
@@ -132,55 +129,8 @@ export default function UserReferrals() {
             ) : (
               <div className="py-6 text-center text-muted-foreground">
                 <Users className="mx-auto h-10 w-10 opacity-50" />
-                <p className="mt-3">No Level 1 referrals yet</p>
+                <p className="mt-3">No referrals yet</p>
                 <p className="text-sm">Share your referral link to invite others!</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Level 2 Referrals */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading text-lg flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-success/10 text-xs font-semibold text-success">2</span>
-              Level 2 Referrals
-            </CardTitle>
-            <CardDescription>Referrals made by your referrals</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))}
-              </div>
-            ) : level2Referrals.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full" data-testid="table-level2-referrals">
-                  <thead>
-                    <tr className="border-b text-left text-sm text-muted-foreground">
-                      <th className="pb-3 font-medium">Name</th>
-                      <th className="pb-3 font-medium">Email</th>
-                      <th className="pb-3 font-medium">Join Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {level2Referrals.map((referral) => (
-                      <tr key={referral.id} className="border-b last:border-0" data-testid={`row-referral-${referral.id}`}>
-                        <td className="py-3 font-medium">{referral.name}</td>
-                        <td className="py-3 text-muted-foreground">{referral.email}</td>
-                        <td className="py-3 text-muted-foreground">{formatDate(referral.joinDate)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="py-6 text-center text-muted-foreground">
-                <Users className="mx-auto h-10 w-10 opacity-50" />
-                <p className="mt-3">No Level 2 referrals yet</p>
-                <p className="text-sm">When your referrals invite others, they'll appear here</p>
               </div>
             )}
           </CardContent>

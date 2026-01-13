@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Users, User, Calendar, Copy, Check } from "lucide-react";
+import { Users, Calendar, Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { UserStats, ReferralUser } from "@shared/schema";
 
@@ -121,9 +121,9 @@ export default function UserDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {statsLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
+            Array.from({ length: 3 }).map((_, i) => (
               <Card key={i}>
                 <CardContent className="p-6">
                   <Skeleton className="h-16 w-full" />
@@ -136,23 +136,18 @@ export default function UserDashboard() {
                 title="Total Referrals"
                 value={stats?.totalReferrals ?? 0}
                 icon={<Users className="h-6 w-6 text-primary" />}
-              />
-              <StatCard
-                title="Level 1 Referrals"
-                value={stats?.level1Referrals ?? 0}
-                icon={<User className="h-6 w-6 text-accent" />}
-                description="Direct referrals"
-              />
-              <StatCard
-                title="Level 2 Referrals"
-                value={stats?.level2Referrals ?? 0}
-                icon={<Users className="h-6 w-6 text-success" />}
-                description="Referrals by your referrals"
+                description="People who joined using your link"
               />
               <StatCard
                 title="Join Date"
                 value={stats?.joinDate ? formatDate(stats.joinDate) : "-"}
                 icon={<Calendar className="h-6 w-6 text-primary" />}
+              />
+              <StatCard
+                title="Referral Code"
+                value={currentUser?.referralCode || "-"}
+                icon={<Copy className="h-6 w-6 text-accent" />}
+                description="Share this code with others"
               />
             </>
           )}
@@ -183,7 +178,6 @@ export default function UserDashboard() {
                     <tr className="border-b text-left text-sm text-muted-foreground">
                       <th className="pb-3 font-medium">Name</th>
                       <th className="pb-3 font-medium">Email</th>
-                      <th className="pb-3 font-medium">Level</th>
                       <th className="pb-3 font-medium">Join Date</th>
                     </tr>
                   </thead>
@@ -192,15 +186,6 @@ export default function UserDashboard() {
                       <tr key={referral.id} className="border-b last:border-0" data-testid={`row-referral-${referral.id}`}>
                         <td className="py-3">{referral.name}</td>
                         <td className="py-3 text-muted-foreground">{referral.email}</td>
-                        <td className="py-3">
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                            referral.level === 1 
-                              ? "bg-accent/10 text-accent" 
-                              : "bg-success/10 text-success"
-                          }`}>
-                            Level {referral.level}
-                          </span>
-                        </td>
                         <td className="py-3 text-muted-foreground">{formatDate(referral.joinDate)}</td>
                       </tr>
                     ))}

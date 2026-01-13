@@ -155,25 +155,17 @@ export class MemStorage implements IStorage {
     if (!user) {
       return {
         totalReferrals: 0,
-        level1Referrals: 0,
-        level2Referrals: 0,
         joinDate: new Date(),
       };
     }
 
     const allUsers = Array.from(this.users.values());
     
-    // Level 1: Direct referrals
-    const level1 = allUsers.filter(u => u.referredBy === user.referralCode);
-    
-    // Level 2: Referrals by level 1 referrals
-    const level1Codes = level1.map(u => u.referralCode);
-    const level2 = allUsers.filter(u => u.referredBy && level1Codes.includes(u.referredBy));
+    // Only count direct referrals
+    const directReferrals = allUsers.filter(u => u.referredBy === user.referralCode);
 
     return {
-      totalReferrals: level1.length + level2.length,
-      level1Referrals: level1.length,
-      level2Referrals: level2.length,
+      totalReferrals: directReferrals.length,
       joinDate: user.joinDate,
     };
   }
@@ -183,34 +175,18 @@ export class MemStorage implements IStorage {
     if (!user) return [];
 
     const allUsers = Array.from(this.users.values());
-    const referrals: ReferralUser[] = [];
     
-    // Level 1: Direct referrals
-    const level1Users = allUsers.filter(u => u.referredBy === user.referralCode);
-    for (const u of level1Users) {
-      referrals.push({
+    // Only direct referrals
+    const directReferrals = allUsers
+      .filter(u => u.referredBy === user.referralCode)
+      .map(u => ({
         id: u.id,
         name: u.name,
         email: u.email,
-        level: 1,
         joinDate: u.joinDate,
-      });
-    }
-    
-    // Level 2: Referrals by level 1 referrals
-    const level1Codes = level1Users.map(u => u.referralCode);
-    const level2Users = allUsers.filter(u => u.referredBy && level1Codes.includes(u.referredBy));
-    for (const u of level2Users) {
-      referrals.push({
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        level: 2,
-        joinDate: u.joinDate,
-      });
-    }
+      }));
 
-    return referrals.sort(
+    return directReferrals.sort(
       (a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime()
     );
   }

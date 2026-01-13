@@ -54,14 +54,11 @@ export interface ReferralUser {
   id: string;
   name: string;
   email: string;
-  level: number;
   joinDate: Date;
 }
 
 export interface UserStats {
   totalReferrals: number;
-  level1Referrals: number;
-  level2Referrals: number;
   joinDate: Date;
 }
 

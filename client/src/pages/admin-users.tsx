@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Users, Shield, User } from "lucide-react";
+import { Users, Shield, User, Eye } from "lucide-react";
 import type { User as UserType } from "@shared/schema";
 
 export default function AdminUsers() {
@@ -55,7 +56,7 @@ export default function AdminUsers() {
       <div className="space-y-6">
         <div>
           <h1 className="font-heading text-2xl font-semibold">Users Management</h1>
-          <p className="text-muted-foreground">View and manage all community members</p>
+          <p className="text-muted-foreground">View and manage all community members. Click on a user to see their referrals.</p>
         </div>
 
         <Card>
@@ -124,18 +125,30 @@ export default function AdminUsers() {
                         </td>
                         <td className="py-3 text-muted-foreground">{formatDate(user.joinDate)}</td>
                         <td className="py-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleStatusMutation.mutate({ 
-                              userId: user.id, 
-                              isActive: !user.isActive 
-                            })}
-                            disabled={toggleStatusMutation.isPending || user.role === "admin"}
-                            data-testid={`button-toggle-status-${user.id}`}
-                          >
-                            {user.isActive ? "Deactivate" : "Activate"}
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Link href={`/admin/users/${user.id}`}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                data-testid={`button-view-user-${user.id}`}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                View
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleStatusMutation.mutate({ 
+                                userId: user.id, 
+                                isActive: !user.isActive 
+                              })}
+                              disabled={toggleStatusMutation.isPending || user.role === "admin"}
+                              data-testid={`button-toggle-status-${user.id}`}
+                            >
+                              {user.isActive ? "Deactivate" : "Activate"}
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}

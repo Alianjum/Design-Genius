@@ -71,7 +71,7 @@ export class MemStorage implements IStorage {
     };
     this.users.set(user1Id, user1);
 
-    // Sample user 2 - referred by user1
+    // Sample user 2 - referred by Sarah (demonstrates Sarah's referral)
     const user2Id = randomUUID();
     const user2: User = {
       id: user2Id,
@@ -79,12 +79,27 @@ export class MemStorage implements IStorage {
       email: "michael@example.com",
       password: "password123",
       referralCode: generateReferralCode(),
-      referredBy: user1.referralCode,
+      referredBy: user1.referralCode, // Michael was referred by Sarah
       role: "user",
       isActive: true,
       joinDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
     };
     this.users.set(user2Id, user2);
+
+    // Sample user 4 - referred by admin (another direct referral for admin)
+    const user4Id = randomUUID();
+    const user4: User = {
+      id: user4Id,
+      name: "James Wilson",
+      email: "james@example.com",
+      password: "password123",
+      referralCode: generateReferralCode(),
+      referredBy: adminUser.referralCode,
+      role: "user",
+      isActive: true,
+      joinDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    };
+    this.users.set(user4Id, user4);
 
     // Sample user 3 - referred by admin
     const user3Id = randomUUID();

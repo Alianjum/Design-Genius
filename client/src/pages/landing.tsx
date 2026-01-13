@@ -17,6 +17,20 @@ export default function Landing() {
               </div>
               <span className="font-heading text-xl font-semibold">Help the Group</span>
             </div>
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/about">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">About</span>
+              </Link>
+              <Link href="/how-it-works">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">How It Works</span>
+              </Link>
+              <Link href="/resources">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Resources</span>
+              </Link>
+              <Link href="/support">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Support</span>
+              </Link>
+            </nav>
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <Link href="/login">
@@ -51,9 +65,11 @@ export default function Landing() {
                   Join Community
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="min-w-[200px]" data-testid="button-learn-more">
-                Learn More
-              </Button>
+              <Link href="/how-it-works">
+                <Button variant="outline" size="lg" className="min-w-[200px]" data-testid="button-learn-more">
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -197,25 +213,61 @@ export default function Landing() {
             <div>
               <h4 className="font-heading font-semibold">Quick Links</h4>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">How It Works</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Resources</a></li>
+                <li>
+                  <Link href="/about">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">About Us</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/how-it-works">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">How It Works</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/resources">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Resources</span>
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading font-semibold">Support</h4>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
+                <li>
+                  <Link href="/support">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Help Center</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Contact Us</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">FAQ</span>
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading font-semibold">Legal</h4>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Cookie Policy</a></li>
+                <li>
+                  <Link href="/privacy">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Privacy Policy</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Terms of Service</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cookies">
+                    <span className="hover:text-foreground transition-colors cursor-pointer">Cookie Policy</span>
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

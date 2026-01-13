@@ -1,0 +1,158 @@
+You are a senior UI/UX designer and frontend developer.
+
+Your task is to design a PREMIUM, CLEAN, PROFESSIONAL web UI for a project called:
+
+“Help the Group” – A support community for cancer patients and survivors.
+
+IMPORTANT TECH RULES (STRICT):
+- Use ONLY custom HTML5, CSS3, Bootstrap 5, and jQuery
+- DO NOT use React, Vue, Angular, Next.js, or any JS framework
+- DO NOT use pre-made templates
+- Use semantic HTML and clean class naming
+- Desktop-first design (1440px width)
+- Write clean, readable code with comments
+
+DESIGN STYLE:
+- Premium SaaS look
+- Calm, trustworthy healthcare theme
+- Clean spacing, card-based layout
+- Soft shadows, rounded corners
+- Professional, modern (not flashy)
+
+COLOR SCHEME (STRICT):
+Primary Blue: #1D4ED8
+Soft Teal: #22D3EE
+Accent Green: #10B981
+Background: #F9FAFB
+Card Background: #FFFFFF
+Border: #E5E7EB
+Primary Text: #111827
+Secondary Text: #6B7280
+
+TYPOGRAPHY:
+- Headings: Poppins (Google Font)
+- Body: Inter (Google Font)
+- H1: 36px bold
+- H2: 28px semibold
+- H3: 22px semibold
+- Body: 16px regular
+
+GLOBAL UI RULES:
+- Buttons radius: 8px
+- Cards radius: 12px
+- Inputs radius: 8px
+- Card shadow: 0 1px 3px rgba(0,0,0,0.1)
+- Consistent padding and margins
+- No clutter, no heavy animations
+
+LAYOUT SYSTEM:
+- Bootstrap container (max-width 1440px)
+- 12-column grid
+- Sidebar layout for dashboards
+
+--------------------------------
+PAGES TO DESIGN (HTML PAGES):
+--------------------------------
+
+1) LANDING PAGE (index.html)
+- Header with logo (left)
+- Login + Join Community buttons (right)
+- Hero section:
+  - Title: "You Are Not Alone"
+  - Subtitle: Support community for cancer patients & survivors
+  - Primary CTA button: Join Community
+- "How It Works" section with 3 cards:
+  1. Join the community
+  2. Invite others
+  3. Support & grow together
+- Trust / purpose section
+- Footer with links
+
+--------------------------------
+
+2) LOGIN PAGE (login.html)
+- Centered login card
+- Fields: Email, Password
+- Login button
+- Minimal design
+
+--------------------------------
+
+3) SIGNUP PAGE – REFERRAL BASED (signup.html)
+- Fields:
+  - Name
+  - Email
+  - Password
+  - Referral Code (readonly or auto-filled)
+- Create Account button
+- Clean form layout
+
+--------------------------------
+
+4) USER DASHBOARD + REFERRAL (dashboard-user.html)
+- Sidebar menu:
+  - Dashboard
+  - Referrals
+  - Email Invitations
+  - Logout
+- Top stats cards:
+  - Total Referrals
+  - Level 1 Referrals
+  - Level 2 Referrals
+  - Join Date
+- Referral link card with copy button
+- Referral users table:
+  - Name | Email | Level | Join Date
+
+--------------------------------
+
+5) ADMIN DASHBOARD + REFERRAL (dashboard-admin.html)
+- Same layout as user dashboard but with admin controls
+- Admin stats cards:
+  - Total Users
+  - Active Users
+  - Total Referrals
+  - Daily Growth
+- Users management table:
+  - Name | Email | Referral Count | Status
+
+--------------------------------
+
+6) EMAIL INVITATIONS PAGE (email.html)
+- Two sections on the same page:
+
+SECTION A: SEND EMAIL
+- Multi-email input (allow multiple emails)
+- Subject field
+- Message textarea
+- Auto referral placeholder text:
+  {{REFERRAL_URL}}
+- Send Emails button
+
+SECTION B: EMAIL LOGS
+- Table:
+  - Recipient Email
+  - Sender Role (User/Admin)
+  - Date
+  - Status
+
+--------------------------------
+
+FUNCTIONAL NOTES (UI ONLY):
+- Referral URL placeholder is static text for now
+- Tables can use dummy data
+- No backend integration required
+- Focus on visual design & structure
+
+OUTPUT REQUIREMENTS:
+- Provide full HTML + CSS + JS files
+- Use Bootstrap 5 CDN
+- Use jQuery CDN
+- Comment code clearly
+- Make the UI look client-ready & premium
+
+DO NOT:
+- Use React or SPA frameworks
+- Use Tailwind
+- Use Material UI
+- Overdesign or clutter UI

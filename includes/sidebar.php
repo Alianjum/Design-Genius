@@ -17,6 +17,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li>
+                <a href="/admin/referrals.php" class="<?php echo $currentPage === 'referrals.php' ? 'active' : ''; ?>" data-testid="link-admin-referrals">
+                    <i class="bi bi-person-plus"></i>
+                    <span>My Referrals</span>
+                </a>
+            </li>
+            <li>
                 <a href="/admin/users.php" class="<?php echo $currentPage === 'users.php' ? 'active' : ''; ?>" data-testid="link-admin-users">
                     <i class="bi bi-people"></i>
                     <span>All Users</span>
@@ -25,7 +31,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <li>
                 <a href="/admin/emails.php" class="<?php echo $currentPage === 'emails.php' ? 'active' : ''; ?>" data-testid="link-admin-emails">
                     <i class="bi bi-envelope"></i>
-                    <span>Email Logs</span>
+                    <span>Email Management</span>
                 </a>
             </li>
         <?php else: ?>

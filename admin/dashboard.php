@@ -7,6 +7,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+$referralCode = $_SESSION['referral_code'];
+$referralUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/signup.php?ref=' . $referralCode;
+
 $stmt = $pdo->query("SELECT COUNT(*) FROM users");
 $totalUsers = $stmt->fetchColumn();
 
@@ -18,6 +21,10 @@ $totalReferrals = $stmt->fetchColumn();
 
 $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE join_date >= CURRENT_DATE");
 $todaySignups = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
+$stmt->execute([$referralCode]);
+$myReferrals = $stmt->fetchColumn();
 
 $stmt = $pdo->query("SELECT * FROM users ORDER BY join_date DESC LIMIT 5");
 $recentUsers = $stmt->fetchAll();
@@ -61,6 +68,24 @@ $pageTitle = 'Admin Dashboard';
                 <div class="stats-icon"><i class="bi bi-graph-up"></i></div>
                 <div class="stats-value" data-testid="text-today-signups"><?php echo $todaySignups; ?></div>
                 <div class="stats-label">Today's Signups</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="referral-link-card">
+            <h5><i class="bi bi-link-45deg me-2"></i>Your Referral Link</h5>
+            <p class="text-muted mb-3">Share this link to invite others to join the community.</p>
+            <div class="referral-link-input">
+                <input type="text" id="referral-url" value="<?php echo htmlspecialchars($referralUrl); ?>" readonly data-testid="input-referral-link">
+                <button class="btn copy-btn" onclick="copyReferralLink()" data-testid="button-copy-link">
+                    <i class="bi bi-clipboard me-1"></i> Copy
+                </button>
+            </div>
+            <div class="mt-3">
+                <a href="/admin/referrals.php" class="btn btn-outline-primary btn-sm" data-testid="link-my-referrals">
+                    <i class="bi bi-people me-1"></i> View My Referrals (<?php echo $myReferrals; ?>)
+                </a>
             </div>
         </div>
     </div>

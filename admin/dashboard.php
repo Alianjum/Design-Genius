@@ -26,6 +26,18 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
 $stmt->execute([$referralCode]);
 $myReferrals = $stmt->fetchColumn();
 
+$userId = $_SESSION['user_id'];
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$userId]);
+$adminUser = $stmt->fetch();
+
+$referrer = null;
+if ($adminUser['referred_by']) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE referral_code = ?");
+    $stmt->execute([$adminUser['referred_by']]);
+    $referrer = $stmt->fetch();
+}
+
 $stmt = $pdo->query("SELECT * FROM users ORDER BY join_date DESC LIMIT 5");
 $recentUsers = $stmt->fetchAll();
 
@@ -42,32 +54,55 @@ $pageTitle = 'Admin Dashboard';
     </div>
     
     <div class="row g-4 mb-4">
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-people"></i></div>
                 <div class="stats-value" data-testid="text-total-users"><?php echo $totalUsers; ?></div>
                 <div class="stats-label">Total Users</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-person-check"></i></div>
                 <div class="stats-value" data-testid="text-active-users"><?php echo $activeUsers; ?></div>
                 <div class="stats-label">Active Users</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-person-plus"></i></div>
                 <div class="stats-value" data-testid="text-total-referrals"><?php echo $totalReferrals; ?></div>
                 <div class="stats-label">Total Referrals</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-graph-up"></i></div>
                 <div class="stats-value" data-testid="text-today-signups"><?php echo $todaySignups; ?></div>
                 <div class="stats-label">Today's Signups</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card stats-card">
+                <div class="stats-icon"><i class="bi bi-person-heart"></i></div>
+                <div class="stats-value" data-testid="text-referred-by">
+                    <?php if ($referrer): ?>
+                        <?php echo htmlspecialchars($referrer['name']); ?>
+                    <?php else: ?>
+                        <span class="text-muted" style="font-size: 0.9rem;">Direct Signup</span>
+                    <?php endif; ?>
+                </div>
+                <div class="stats-label">Referred By</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card stats-card">
+                <div class="stats-icon"><i class="bi bi-share"></i></div>
+                <div class="stats-value" data-testid="text-my-referrals"><?php echo $myReferrals; ?></div>
+                <div class="stats-label">My Referrals</div>
             </div>
         </div>
     </div>

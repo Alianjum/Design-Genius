@@ -14,6 +14,13 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
+$referrer = null;
+if ($user['referred_by']) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE referral_code = ?");
+    $stmt->execute([$user['referred_by']]);
+    $referrer = $stmt->fetch();
+}
+
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
 $stmt->execute([$referralCode]);
 $totalReferrals = $stmt->fetchColumn();
@@ -37,21 +44,34 @@ $pageTitle = 'Dashboard';
     </div>
     
     <div class="row g-4 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-people"></i></div>
                 <div class="stats-value" data-testid="text-total-referrals"><?php echo $totalReferrals; ?></div>
                 <div class="stats-label">Total Referrals</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="stats-icon"><i class="bi bi-person-heart"></i></div>
+                <div class="stats-value" data-testid="text-referred-by">
+                    <?php if ($referrer): ?>
+                        <?php echo htmlspecialchars($referrer['name']); ?>
+                    <?php else: ?>
+                        <span class="text-muted" style="font-size: 0.9rem;">Direct Signup</span>
+                    <?php endif; ?>
+                </div>
+                <div class="stats-label">Referred By</div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-calendar-check"></i></div>
                 <div class="stats-value" data-testid="text-join-date"><?php echo date('M j, Y', strtotime($user['join_date'])); ?></div>
                 <div class="stats-label">Member Since</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card stats-card">
                 <div class="stats-icon"><i class="bi bi-check-circle"></i></div>
                 <div class="stats-value text-success" data-testid="text-status">Active</div>

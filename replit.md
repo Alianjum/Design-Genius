@@ -98,6 +98,17 @@ To initialize/reset the database:
 php config/init_db.php
 ```
 
+## SMTP Email Configuration
+
+To enable email sending, set the following environment variables/secrets:
+- `SMTP_HOST` - SMTP server hostname (e.g., smtp.gmail.com)
+- `SMTP_PORT` - SMTP port (usually 587 for TLS, 465 for SSL)
+- `SMTP_USER` - SMTP username/email
+- `SMTP_PASS` - SMTP password or app password
+- `SMTP_FROM_EMAIL` - From email address
+- `SMTP_FROM_NAME` - From name (optional, defaults to "Help the Group")
+- `SMTP_ENCRYPTION` - Encryption type: 'tls' or 'ssl' (optional, defaults to 'tls')
+
 ## Admin Credentials
 - Email: admin@helpthegroup.com
 - Password: admin123

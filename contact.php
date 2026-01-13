@@ -1,23 +1,6 @@
 <?php
 session_start();
 $pageTitle = 'Contact Us';
-$success = '';
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    
-    if (empty($name) || empty($email) || empty($subject) || empty($message)) {
-        $error = 'Please fill in all fields.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address.';
-    } else {
-        $success = 'Thank you for your message. We will get back to you soon!';
-    }
-}
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -48,15 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1>Contact Us</h1>
             <p class="lead">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
             
-            <?php if ($success): ?>
-                <div class="alert alert-success" data-testid="text-success"><?php echo htmlspecialchars($success); ?></div>
-            <?php endif; ?>
+            <div id="contact-alert"></div>
             
-            <?php if ($error): ?>
-                <div class="alert alert-danger" data-testid="text-error"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            
-            <form method="POST" action="" class="mt-4">
+            <form id="contact-form" class="mt-4">
                 <div class="mb-3">
                     <label class="form-label" for="name">Your Name</label>
                     <input type="text" class="form-control" id="name" name="name" required data-testid="input-name">
@@ -73,8 +50,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label" for="message">Message</label>
                     <textarea class="form-control" id="message" name="message" rows="5" required data-testid="input-message"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" data-testid="button-send">Send Message</button>
+                <button type="submit" class="btn btn-primary" id="contact-submit" data-testid="button-send">
+                    <span class="btn-text">Send Message</span>
+                    <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm me-2"></span>Sending...</span>
+                </button>
             </form>
+            
+            <script>
+            $(document).ready(function() {
+                $('#contact-form').on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    var btn = $('#contact-submit');
+                    btn.find('.btn-text').addClass('d-none');
+                    btn.find('.btn-loading').removeClass('d-none');
+                    btn.prop('disabled', true);
+                    
+                    var data = {
+                        name: $('#name').val(),
+                        email: $('#email').val(),
+                        subject: $('#subject').val(),
+                        message: $('#message').val()
+                    };
+                    
+                    $.ajax({
+                        url: '/api/send-contact.php',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function(response) {
+                            if (response.success) {
+                                $('#contact-alert').html('<div class="alert alert-success">' + response.message + '</div>');
+                                $('#contact-form')[0].reset();
+                            } else {
+                                $('#contact-alert').html('<div class="alert alert-danger">' + response.message + '</div>');
+                            }
+                        },
+                        error: function() {
+                            $('#contact-alert').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                        },
+                        complete: function() {
+                            btn.find('.btn-text').removeClass('d-none');
+                            btn.find('.btn-loading').addClass('d-none');
+                            btn.prop('disabled', false);
+                        }
+                    });
+                });
+            });
+            </script>
         </div>
         <div class="col-lg-5 offset-lg-1 mt-5 mt-lg-0">
             <div class="card p-4">

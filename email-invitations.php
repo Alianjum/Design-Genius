@@ -11,38 +11,6 @@ $userId = $_SESSION['user_id'];
 $referralCode = $_SESSION['referral_code'];
 $referralUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/signup.php?ref=' . $referralCode;
 
-$success = '';
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $emails = trim($_POST['emails'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    
-    if (empty($emails) || empty($subject) || empty($message)) {
-        $error = 'Please fill in all fields.';
-    } else {
-        $emailList = array_filter(array_map('trim', explode(',', $emails)));
-        $validEmails = array_filter($emailList, function($email) {
-            return filter_var($email, FILTER_VALIDATE_EMAIL);
-        });
-        
-        if (empty($validEmails)) {
-            $error = 'Please enter at least one valid email address.';
-        } else {
-            $finalMessage = str_replace('{{REFERRAL_URL}}', $referralUrl, $message);
-            
-            $stmt = $pdo->prepare("INSERT INTO email_logs (sender_id, recipient_email, subject, message, status) VALUES (?, ?, ?, ?, ?)");
-            
-            foreach ($validEmails as $email) {
-                $stmt->execute([$userId, $email, $subject, $finalMessage, 'sent']);
-            }
-            
-            $success = 'Invitation(s) sent to ' . count($validEmails) . ' recipient(s)!';
-        }
-    }
-}
-
 $stmt = $pdo->prepare("SELECT * FROM email_logs WHERE sender_id = ? ORDER BY sent_at DESC LIMIT 10");
 $stmt->execute([$userId]);
 $emailLogs = $stmt->fetchAll();
@@ -59,20 +27,14 @@ $pageTitle = 'Email Invitations';
         <p>Send personalized invitations to invite others to join the community.</p>
     </div>
     
-    <?php if ($success): ?>
-        <div class="alert alert-success" data-testid="text-success"><?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
-    
-    <?php if ($error): ?>
-        <div class="alert alert-danger" data-testid="text-error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
+    <div id="invitation-alert"></div>
     
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Send Invitation</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="">
+            <form id="invitation-form">
                 <div class="mb-3">
                     <label class="form-label" for="emails">Recipient Email(s)</label>
                     <input type="text" class="form-control" id="emails" name="emails" placeholder="email1@example.com, email2@example.com" required data-testid="input-emails">
@@ -96,12 +58,56 @@ Best regards,
 <?php echo htmlspecialchars($_SESSION['user_name']); ?></textarea>
                     <div class="form-text">Use {{REFERRAL_URL}} as a placeholder for your referral link</div>
                 </div>
-                <button type="submit" class="btn btn-primary" data-testid="button-send-invitation">
-                    <i class="bi bi-send me-2"></i>Send Invitation
+                <button type="submit" class="btn btn-primary" id="invitation-submit" data-testid="button-send-invitation">
+                    <span class="btn-text"><i class="bi bi-send me-2"></i>Send Invitation</span>
+                    <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm me-2"></span>Sending...</span>
                 </button>
             </form>
         </div>
     </div>
+    
+    <script>
+    $(document).ready(function() {
+        $('#invitation-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var btn = $('#invitation-submit');
+            btn.find('.btn-text').addClass('d-none');
+            btn.find('.btn-loading').removeClass('d-none');
+            btn.prop('disabled', true);
+            
+            var data = {
+                emails: $('#emails').val(),
+                subject: $('#subject').val(),
+                message: $('#message').val()
+            };
+            
+            $.ajax({
+                url: '/api/send-invitation.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        $('#invitation-alert').html('<div class="alert alert-success">' + response.message + '</div>');
+                        $('#emails').val('');
+                        setTimeout(function() { location.reload(); }, 2000);
+                    } else {
+                        $('#invitation-alert').html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function() {
+                    $('#invitation-alert').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                },
+                complete: function() {
+                    btn.find('.btn-text').removeClass('d-none');
+                    btn.find('.btn-loading').addClass('d-none');
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+    </script>
     
     <div class="card">
         <div class="card-header">

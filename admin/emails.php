@@ -7,37 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$userId = $_SESSION['user_id'];
-$success = '';
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $emails = trim($_POST['emails'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    
-    if (empty($emails) || empty($subject) || empty($message)) {
-        $error = 'Please fill in all fields.';
-    } else {
-        $emailList = array_filter(array_map('trim', explode(',', $emails)));
-        $validEmails = array_filter($emailList, function($email) {
-            return filter_var($email, FILTER_VALIDATE_EMAIL);
-        });
-        
-        if (empty($validEmails)) {
-            $error = 'Please enter at least one valid email address.';
-        } else {
-            $stmt = $pdo->prepare("INSERT INTO email_logs (sender_id, recipient_email, subject, message, status) VALUES (?, ?, ?, ?, ?)");
-            
-            foreach ($validEmails as $email) {
-                $stmt->execute([$userId, $email, $subject, $message, 'sent']);
-            }
-            
-            $success = 'Email(s) sent to ' . count($validEmails) . ' recipient(s)!';
-        }
-    }
-}
-
 $stmt = $pdo->query("SELECT e.*, u.name as sender_name, u.role as sender_role FROM email_logs e LEFT JOIN users u ON e.sender_id = u.id ORDER BY e.sent_at DESC");
 $emailLogs = $stmt->fetchAll();
 
@@ -53,20 +22,14 @@ $pageTitle = 'Email Management';
         <p>Send emails and view all invitation emails sent by community members.</p>
     </div>
     
-    <?php if ($success): ?>
-        <div class="alert alert-success" data-testid="text-success"><?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
-    
-    <?php if ($error): ?>
-        <div class="alert alert-danger" data-testid="text-error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
+    <div id="email-alert"></div>
     
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Send Email</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="">
+            <form id="admin-email-form">
                 <div class="mb-3">
                     <label class="form-label" for="emails">Recipient Email(s)</label>
                     <input type="text" class="form-control" id="emails" name="emails" placeholder="email1@example.com, email2@example.com" required data-testid="input-emails">
@@ -80,12 +43,56 @@ $pageTitle = 'Email Management';
                     <label class="form-label" for="message">Message</label>
                     <textarea class="form-control" id="message" name="message" rows="6" placeholder="Write your message here..." required data-testid="input-message"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" data-testid="button-send-email">
-                    <i class="bi bi-send me-2"></i>Send Email
+                <button type="submit" class="btn btn-primary" id="admin-email-submit" data-testid="button-send-email">
+                    <span class="btn-text"><i class="bi bi-send me-2"></i>Send Email</span>
+                    <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm me-2"></span>Sending...</span>
                 </button>
             </form>
         </div>
     </div>
+    
+    <script>
+    $(document).ready(function() {
+        $('#admin-email-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var btn = $('#admin-email-submit');
+            btn.find('.btn-text').addClass('d-none');
+            btn.find('.btn-loading').removeClass('d-none');
+            btn.prop('disabled', true);
+            
+            var data = {
+                emails: $('#emails').val(),
+                subject: $('#subject').val(),
+                message: $('#message').val()
+            };
+            
+            $.ajax({
+                url: '/api/send-invitation.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        $('#email-alert').html('<div class="alert alert-success">' + response.message + '</div>');
+                        $('#admin-email-form')[0].reset();
+                        setTimeout(function() { location.reload(); }, 2000);
+                    } else {
+                        $('#email-alert').html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function() {
+                    $('#email-alert').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                },
+                complete: function() {
+                    btn.find('.btn-text').removeClass('d-none');
+                    btn.find('.btn-loading').addClass('d-none');
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+    </script>
     
     <div class="card">
         <div class="card-header">
